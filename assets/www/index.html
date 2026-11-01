@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>NAPS2 Android</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ÜST UYGULAMA ÇUBUĞU (APP BAR) -->
+  <header class="app-bar">
+    <div class="brand">
+      <div class="logo-badge">N2</div>
+      <div>
+        <h1 class="app-title">NAPS2</h1>
+        <span class="app-subtitle">Android Belge Motoru</span>
+      </div>
+    </div>
+
+    <!-- Profil Seçici -->
+    <div class="profile-selector-container">
+      <select id="profileSelect" class="profile-select" title="Tarama Profili">
+        <option value="bw_doc">Hızlı Belge (Siyah-Beyaz A4)</option>
+        <option value="color_doc" selected>Renkli Resmi Belge (A4)</option>
+        <option value="photo">Yüksek Kalite Fotoğraf</option>
+        <option value="uyap">UYAP / Dava Evrakı (A4)</option>
+      </select>
+    </div>
+
+    <!-- Üst Hızlı Butonlar -->
+    <div class="app-bar-actions">
+      <button id="btnSelectAll" class="icon-btn" title="Tümünü Seç">
+        <svg viewBox="0 0 24 24"><path d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.48 12l-1.41 1.41L11.66 19l12-12-1.42-1.41zM.41 13.41L6 19l1.41-1.41L1.83 12 .41 13.41z"/></svg>
+      </button>
+      <button id="btnDeleteSelected" class="icon-btn danger" title="Seçilenleri Sil">
+        <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+      </button>
+      <button id="btnRotateAll" class="icon-btn" title="90° Döndür">
+        <svg viewBox="0 0 24 24"><path d="M7.11 8.53L5.7 7.11C4.8 8.27 4.24 9.61 4.07 11h2.02c.14-.87.49-1.72 1.02-2.47zM6.09 13H4.07c.17 1.39.72 2.73 1.62 3.89l1.41-1.42c-.52-.75-.87-1.6-1.01-2.47zm1.01 5.32c1.16.9 2.51 1.44 3.9 1.61V17.9c-.87-.15-1.71-.49-2.46-1.03L7.1 18.32zM13 4.07V1L8.45 5.55 13 10V6.09c3.37 0 6.09 2.72 6.09 6.09s-2.72 6.09-6.09 6.09v2.02c4.49 0 8.11-3.62 8.11-8.11S17.49 4.07 13 4.07z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- HIZLI TARAMA VE İÇE AKTARMA ŞERİDİ -->
+  <section class="scan-ribbon">
+    <button id="btnCameraScan" class="ribbon-btn primary">
+      <svg viewBox="0 0 24 24"><path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg>
+      <span>Kamera ile Tara</span>
+    </button>
+    <button id="btnEsclScan" class="ribbon-btn secondary">
+      <svg viewBox="0 0 24 24"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>
+      <span>Ağ Tarayıcısı (Wi-Fi)</span>
+    </button>
+    <button id="btnImportFiles" class="ribbon-btn tertiary">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+      <span>İçe Aktar (PDF/UDF)</span>
+    </button>
+    <input type="file" id="fileInput" multiple accept=".pdf,.udf,.tiff,.tif,.jpg,.jpeg,.png,.bmp,.webp" style="display:none;">
+  </section>
+
+  <!-- ANA SAYFA TUVALİ / IZGARASI -->
+  <main class="page-container">
+    <div id="emptyState" class="empty-state">
+      <div class="empty-icon">
+        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+      </div>
+      <h2>Henüz Belge Yok</h2>
+      <p>Kamerayı kullanarak belge tarayın, Wi-Fi tarayıcınıza bağlanın veya cihazınızdan PDF, UDF ve görselleri seçin.</p>
+      <div class="format-tags">
+        <span class="tag">PDF</span>
+        <span class="tag">UDF (UYAP)</span>
+        <span class="tag">TIFF</span>
+        <span class="tag">JPG</span>
+        <span class="tag">PNG</span>
+        <span class="tag">A4 Otomatik</span>
+      </div>
+    </div>
+
+    <!-- Küçük Resim Izgarası (Thumbnails Grid) -->
+    <div id="pagesGrid" class="pages-grid" style="display:none;"></div>
+  </main>
+
+  <!-- ALT SABİT AKSİYON ÇUBUĞU (BOTTOM BAR) -->
+  <footer class="bottom-bar">
+    <div class="selection-status">
+      <span id="pageCountLabel">0 Sayfa</span>
+    </div>
+    <div class="bottom-actions">
+      <button id="btnSavePdf" class="btn btn-primary" title="A4 Standartlarında PDF Olarak Kaydet">
+        <svg viewBox="0 0 24 24"><path d="M19 12v7H5v-7H3v7c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2zm-6 .67l2.59-2.58L17 11.5l-5 5-5-5 1.41-1.41L11 12.67V3h2v9.67z"/></svg>
+        <span>PDF Kaydet (A4)</span>
+      </button>
+      <button id="btnShare" class="btn btn-secondary" title="Doğrudan Paylaş (WhatsApp, UYAP, Mail)">
+        <svg viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/></svg>
+        <span>Paylaş</span>
+      </button>
+      <button id="btnOpenPdfSettings" class="btn btn-outline" title="PDF Ayarları">
+        <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+      </button>
+    </div>
+  </footer>
+
+  <!-- GÖRÜNTÜ DÜZENLEYİCİ VE FİLTRELEME MODALI (EDITOR MODAL) -->
+  <div id="editorModal" class="modal">
+    <div class="modal-dialog full">
+      <div class="modal-header">
+        <h3 id="editPageTitle">Sayfa Düzenle (NAPS2 Filtreleri)</h3>
+        <button id="btnCloseEditor" class="icon-btn close-btn">&times;</button>
+      </div>
+
+      <div class="editor-content">
+        <!-- Canlı Önizleme Tuvali -->
+        <div class="canvas-wrapper">
+          <canvas id="previewCanvas"></canvas>
+        </div>
+
+        <!-- Filtre Ayarları Paneli -->
+        <div class="filter-controls">
+          <!-- Filtre Seçim Butonları -->
+          <div class="filter-buttons">
+            <button class="filter-btn active" data-filter="original">Orijinal</button>
+            <button class="filter-btn" data-filter="bw">Siyah-Beyaz Eşik (B&W)</button>
+            <button class="filter-btn" data-filter="gray">Gri Tonlama</button>
+            <button class="filter-btn" data-filter="invert">Ters Renk</button>
+          </div>
+
+          <!-- Siyah-Beyaz Eşikleme Kaydırıcısı -->
+          <div class="slider-group" id="bwSliderGroup" style="display:none;">
+            <label>Metin / Kağıt Eşik Değeri (Threshold): <span id="thresholdVal">128</span></label>
+            <input type="range" id="thresholdSlider" min="10" max="245" value="128">
+          </div>
+
+          <!-- Parlaklık -->
+          <div class="slider-group">
+            <label>Parlaklık: <span id="brightnessVal">0</span></label>
+            <input type="range" id="brightnessSlider" min="-100" max="100" value="0">
+          </div>
+
+          <!-- Kontrast -->
+          <div class="slider-group">
+            <label>Kontrast: <span id="contrastVal">0</span></label>
+            <input type="range" id="contrastSlider" min="-100" max="100" value="0">
+          </div>
+
+          <!-- Döndürme & Aynalama -->
+          <div class="transform-actions">
+            <button id="btnEditRotateLeft" class="btn btn-outline">↺ 90° Sola</button>
+            <button id="btnEditRotateRight" class="btn btn-outline">↻ 90° Sağa</button>
+            <button id="btnEditFlipH" class="btn btn-outline">⇄ Yatay Aynala</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button id="btnCancelEdit" class="btn btn-outline">İptal</button>
+        <button id="btnApplyEdit" class="btn btn-primary">Filtreyi Uygula</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- AĞ TARAYICISI MODALI (eSCL SCANNER MODAL) -->
+  <div id="esclModal" class="modal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3>Wi-Fi Ağ Tarayıcısı (eSCL / AirPrint)</h3>
+        <button id="btnCloseEscl" class="icon-btn close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-desc">Aynı Wi-Fi ağındaki herhangi bir yazıcı veya tarayıcının IP adresini girin (Sürücüsüz AirPrint / Mopria standardı).</p>
+
+        <div class="form-group">
+          <label>Tarayıcı IP Adresi:</label>
+          <input type="text" id="esclIp" class="form-input" placeholder="Örn: 192.168.1.105" value="192.168.1.">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Port:</label>
+            <input type="number" id="esclPort" class="form-input" value="8080">
+          </div>
+          <div class="form-group">
+            <label>Çözünürlük (DPI):</label>
+            <select id="esclRes" class="form-select">
+              <option value="150">150 DPI (Hızlı)</option>
+              <option value="300" selected>300 DPI (Standart A4)</option>
+              <option value="600">600 DPI (Yüksek)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Renk Modu:</label>
+            <select id="esclColor" class="form-select">
+              <option value="RGB24" selected>Renkli (RGB)</option>
+              <option value="Grayscale8">Gri Tonlama</option>
+              <option value="BlackAndWhite1">Siyah-Beyaz</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Besleyici:</label>
+            <select id="esclSource" class="form-select">
+              <option value="Platen" selected>Cam (Platen)</option>
+              <option value="Feeder">Otomatik Besleyici (ADF)</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="esclStatus" class="status-box" style="display:none;"></div>
+      </div>
+      <div class="modal-footer">
+        <button id="btnEsclTest" class="btn btn-outline">Bağlantıyı Test Et</button>
+        <button id="btnEsclStart" class="btn btn-primary">Taramayı Başlat</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PDF AYARLARI MODALI -->
+  <div id="pdfSettingsModal" class="modal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3>PDF ve Çıktı Ayarları (NAPS2)</h3>
+        <button id="btnClosePdfSettings" class="icon-btn close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Kağıt Boyutu Standardı:</label>
+          <select id="pdfPaperSize" class="form-select">
+            <option value="A4" selected>A4 Standardı (Otomatik Yönlendirme - NAPS2 Yöntemi)</option>
+            <option value="LETTER">US Letter</option>
+            <option value="FIT">Görsel Boyutuna Göre (Kenarsız)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Sayfa Yönlendirmesi:</label>
+          <select id="pdfOrientation" class="form-select">
+            <option value="AUTO" selected>Otomatik (Genişlik > Yükseklik ise Yatay, aksi halde Dikey)</option>
+            <option value="PORTRAIT">Dikey A4</option>
+            <option value="LANDSCAPE">Yatay A4</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Yazıcı Güvenli Kenar Boşluğu:</label>
+          <select id="pdfMargin" class="form-select">
+            <option value="14.17" selected>Standart 5 mm (Yazıcı Güvenli Alanı)</option>
+            <option value="0">Kenar Boşluğu Yok (Tam Sayfa)</option>
+            <option value="28.34">Geniş 10 mm</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Özel Dosya Adı Şablonu:</label>
+          <input type="text" id="pdfFilename" class="form-input" placeholder="NAPS2_Belge_{TARIH}.pdf">
+        </div>
+
+        <div class="form-group">
+          <label>Çıktı Modu:</label>
+          <select id="pdfExportMode" class="form-select">
+            <option value="merge" selected>Tüm Sayfaları Tek Bir PDF'de Birleştir</option>
+            <option value="single">Her Sayfayı Ayrı Ayrı PDF Olarak Kaydet</option>
+            <option value="images">Görsel Olarak Kaydet (JPEG / PNG)</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="btnSavePdfSettings" class="btn btn-primary">Kaydet ve Kapat</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/image-filters.js"></script>
+  <script src="js/escl.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

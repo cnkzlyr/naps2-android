@@ -1,0 +1,3 @@
+build_tmp/
+*.keystore
+.DS_Store
